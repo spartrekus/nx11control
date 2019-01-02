@@ -1,0 +1,248 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define PATH_MAX 250
+#include <ncurses.h>
+//#include "../lib/libncurse.c"
+
+int rows, cols;  
+
+void nruncmd( char *thecmd   )
+{
+       char cmdi[PATH_MAX];
+       def_prog_mode();
+       endwin();
+       strncpy( cmdi , "  " , PATH_MAX );
+       strncat( cmdi , thecmd , PATH_MAX - strlen( cmdi ) -1 );
+       strncat( cmdi , " " , PATH_MAX - strlen( cmdi ) -1 );
+       system( cmdi );
+       reset_prog_mode();
+}
+
+
+
+/////////////////////////////
+void drawit( int pagego )
+{
+     getmaxyx( stdscr, rows, cols);
+     mvprintw( 5 , 5, "NX11CONTROL !!!");	
+     mvprintw(rows-1 , 0, "<Press Key to Continue (hjkl)>");
+}
+
+
+int main()
+{	
+        int ch ;  int gameover = 0;
+        ch = 0;
+	initscr();			/* Start curses mode 		  */
+        curs_set( 0 );
+
+        char charo[PATH_MAX]; 
+        int fooint ; 
+
+        while( gameover == 0 ){
+
+        drawit( 0 );
+        mvprintw( rows-1, cols-10, "      " );
+        mvprintw( rows-1, cols-8, "%d ", ch );
+
+	refresh();			/* Print it on to the real screen */
+
+	ch = getch();			/* Wait for user input */
+
+        if ( ch == 40 ) // this is (
+           nruncmd( " xdotool key Left " );  //for feh
+
+        else if ( ch == 41 )     nruncmd( " xdotool key Right " );  //for feh
+
+        else if ( ch == 21 )    nruncmd( " xdotool key Prior " );
+        else if ( ch == 4 )   nruncmd( " xdotool key Next " ); 
+        else if ( ch == 18 )   nruncmd( " xdotool key F5 " ); 
+
+        else if ( ch == '.' ) 
+           nruncmd( " xdotool key period " );  //for feh
+
+        else if ( ch == '/' ) 
+           nruncmd( " xdotool key slash " );  
+
+        else if ( ch == 16 )
+        {  
+           // ctrl+p (for par)
+           erase(); mvprintw( 0,0  , "CTRL+P" );
+           ch = getch();
+           if ( ch == 'a' )
+             nruncmd( "  wmctrl -r :ACTIVE: -b toggle,maximized_vert,maximized_horz   " );
+
+           else if ( ch == 'n' )
+             nruncmd( "  nedit & " );
+           else if ( ch == 'x' )
+             nruncmd( "  msx & " );
+
+           else if ( ch == 'g' )
+              nruncmd( " xdotool key Home " ); 
+           else if ( ch == 'G' )
+              nruncmd( " xdotool key End " ); 
+
+           else if ( ch == 't' )
+             nruncmd( " xdotool key ctrl+t " ); 
+           else if ( ch == 'r' )
+             nruncmd( "  flrun & " );
+           else if ( ch == 'o' )
+             nruncmd( "  floffice & " );
+           else if ( ch == 'L' )
+             nruncmd( "  clear  " );
+           else if ( ch == 'e' )
+             nruncmd( "  chromium www.google.com & " );
+           else if ( ch == 'k' )
+             nruncmd( "  pkill pdflatex ; pkill nedit & " );
+           erase();
+           erase();
+        }
+
+
+
+           else if ( ch ==  68 )
+              nruncmd( " xdotool key Left " ); 
+           else if ( ch ==  66 )
+              nruncmd( " xdotool key Down " ); 
+           else if ( ch ==  65 )
+              nruncmd( " xdotool key Up " ); 
+           else if ( ch ==  67 )
+              nruncmd( " xdotool key Right " ); 
+
+
+        else if ( ch == 20 )  // ctrl+t 
+           nruncmd( " xdotool key ctrl+t " ); 
+
+        else if ( ch == 24 )  // ctrl+x 
+           nruncmd( " xdotool key ctrl+x " ); 
+
+        else if ( ch == 23 )  // ctrl+w
+           nruncmd( " xdotool key ctrl+w " ); 
+
+        else if ( ch == 10 ) 
+           nruncmd( " xdotool key Return " ); 
+        else if ( ch == 13 ) 
+           nruncmd( " xdotool key Return " ); 
+
+        else if ( ch == '<' ) 
+           nruncmd( " xdotool key less " ); 
+        else if ( ch == '>' ) 
+           nruncmd( " xdotool key greater " ); 
+        else if ( ch == '#' ) 
+           nruncmd( " xdotool key numbersign " ); 
+        else if ( ch == '|' ) 
+           nruncmd( " xdotool key bar " ); 
+        else if ( ch == 64 ) 
+           nruncmd( " xdotool key at " ); 
+        else if ( ch == '*' ) 
+           nruncmd( " xdotool key asterisk " ); 
+
+        else if ( 
+           (( ch >= 'a' ) && ( ch <= 'z' ))
+        || (( ch >= '1' ) && ( ch <= '9' ))
+        || (( ch >= 'A' ) && ( ch <= 'Z' ))
+        || ( ch == '0' ) 
+        )
+        {
+           fooint = snprintf( charo, 100 , " xdotool key %c ", ch );
+           printf( "[BEGIN CMD: %s\n" , charo );
+           nruncmd( charo  );
+           printf( "END CMD: %s]\n" , charo );
+        }
+        else switch( ch )
+        {
+           case 13:
+              nruncmd( " xdotool key Return " ); 
+              break;
+           case 4: //ctrl+d
+              nruncmd( " xdotool key Page_Down " ); 
+              break;
+           case 21: //ctrl+u
+              nruncmd( " xdotool key Page_Up " ); 
+              break;
+
+
+           case 27:
+              nruncmd( " xdotool key Escape " ); 
+              break;
+
+           case 32:
+              nruncmd( " xdotool key space " ); 
+              nruncmd( " xdotool key Space " );  // will not work
+              break;
+
+           case 127:
+              nruncmd( " xdotool key BackSpace " ); 
+              break;
+
+
+           //case '>':
+           case 62:
+              nruncmd( " xdotool key Right " ); 
+              break; 
+           //case '<':
+           case 60:
+              nruncmd( " xdotool key Left " ); 
+              break;
+
+
+
+
+       /*
+            65
+        68  66  67
+       */
+           case 68:
+              nruncmd( " xdotool key Left " ); 
+              break;
+           case 66:
+              nruncmd( " xdotool key Down " ); 
+              break;
+           case 65:
+              nruncmd( " xdotool key Up " ); 
+              break;
+           case 67:
+              nruncmd( " xdotool key Right " ); 
+              break; 
+
+           case '+':
+              nruncmd( " xdotool key KP_Add " ); 
+              break;
+           case '-':
+              nruncmd( " xdotool key KP_Subtract " ); 
+              break;
+
+
+           case ']':
+              nruncmd( " xdotool key F12 " ); 
+              break;
+           case '[':
+              nruncmd( " xdotool key F11 " ); 
+              break;
+
+           case '}':
+              nruncmd( " xdotool key End " ); 
+              break;
+
+           case '{':
+              nruncmd( " xdotool key Home " ); 
+              break;
+
+
+         }
+       
+        }
+        curs_set( 1 );
+	endwin();			/* End curses mode		  */
+	return 0;
+}
+
+
+
+//nruncmd( " xdotool key Super_L+w " ); 
+
+
+
+
